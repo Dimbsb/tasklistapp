@@ -14,6 +14,9 @@ const todoSchema = new mongoose.Schema({
 	deadline: { 
 		type: Date, 
 	}, 
+	description: {  // Added Description field
+        type: String,
+    },
 }); 
 
 
