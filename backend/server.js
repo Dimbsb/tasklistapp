@@ -48,7 +48,8 @@ app.post("/api/addTodoList", (req, res) => {
 		task: req.body.task, 
 		status: req.body.status, 
 		deadline: req.body.deadline, 
-		description: req.body.description, 
+		description: req.body.description, // Added Description field
+		category: req.body.category, // Added Category field
 	}) 
 		.then((todo) => res.json(todo)) 
 		.catch((err) => res.json(err)); 
@@ -61,7 +62,8 @@ app.post("/api/updateTodoList/:id", (req, res) => {
 		task: req.body.task, 
 		status: req.body.status, 
 		deadline: req.body.deadline, 
-		description: req.body.description, 
+        description: req.body.description, // Added Description field
+        category: req.body.category, // Added Category field 
 	}; 
 	TodoModel.findByIdAndUpdate(id, updateData) 
 		.then((todo) => res.json(todo)) 

@@ -15,6 +15,8 @@ function Todo() {
 	const [editedDeadline, setEditedDeadline] = useState(""); 
 	const [newDescription, setNewDescription] = useState(""); 
 	const [editedDescription, setEditedDescription] = useState(""); 
+	const [editedCategory, setEditedCategory] = useState(""); 
+	const [newCategory, setNewCategory] = useState("");
 
 	// Fetch tasks from database 
 	useEffect(() => { 
@@ -34,12 +36,14 @@ function Todo() {
 			setEditedStatus(rowData.status); 
 			setEditedDeadline(rowData.deadline || ""); 
 			setEditedDescription(rowData.description || ""); 
+			setEditedCategory(rowData.category || ""); 
 		} else { 
 			setEditableId(null); 
 			setEditedTask(""); 
 			setEditedStatus(""); 
 			setEditedDeadline(""); 
 			setEditedDescription(""); 
+			setEditedCategory("");
 		} 
 	}; 
 
@@ -47,12 +51,12 @@ function Todo() {
 	// Function to add task to the database 
 	const addTask = (e) => { 
 		e.preventDefault(); 
-		if (!newTask || !newStatus || !newDeadline || !newDescription) { 
+		if (!newTask || !newStatus || !newDeadline || !newDescription || !newCategory) {
 			alert("All fields must be filled out."); 
 			return; 
 		} 
 
-		axios.post('/api/addTodoList', { task: newTask, status: newStatus, deadline: newDeadline, description: newDescription }) 
+		axios.post('/api/addTodoList', { task: newTask, status: newStatus, deadline: newDeadline, description: newDescription, category: newCategory })
 			.then(res => { 
 				console.log(res); 
 				window.location.reload(); 
@@ -67,27 +71,29 @@ function Todo() {
 			status: editedStatus, 
 			deadline: editedDeadline, 
 			description: editedDescription, 
+			category: editedCategory,
 		}; 
 
 		// If the fields are empty 
-		if (!editedTask || !editedStatus || !editedDeadline || !editedDescription) { 
+		if (!editedTask || !editedStatus || !editedDeadline || !editedDescription || !editedCategory) {
 			alert("All fields must be filled out."); 
 			return; 
 		} 
 
 		// Updating edited data to the database through updateById API 
-		axios.post('/api/updateTodoList/' + id, editedData) 
-			.then(result => { 
-				console.log(result); 
-				setEditableId(null); 
-				setEditedTask(""); 
-				setEditedStatus(""); 
-				setEditedDeadline(""); // Clear the edited deadline 
-				setEditedDescription(""); 
-				window.location.reload(); 
-			}) 
-			.catch(err => console.log(err)); 
-	} 
+        axios.post('/api/updateTodoList/' + id, editedData)
+            .then(result => {
+                console.log(result);
+                setEditableId(null);
+                setEditedTask("");
+                setEditedStatus("");
+                setEditedDeadline("");
+                setEditedDescription("");
+                setEditedCategory(""); // Clear category
+                window.location.reload();
+            })
+            .catch(err => console.log(err));
+    }
 
 
 	// Delete task from database 
@@ -115,6 +121,7 @@ function Todo() {
 									<th>Status</th> 
 									<th>Deadline</th> 
 									<th>Description</th> 
+									<th>Category</th> 
 									<th>Actions</th> 
 								</tr> 
 							</thead> 
@@ -171,6 +178,19 @@ function Todo() {
 													data.description
 												)} 
 											</td> 
+
+											<td>
+                                                {editableId === data._id ? (
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={editedCategory}
+                                                        onChange={(e) => setEditedCategory(e.target.value)}
+                                                    />
+                                                ) : (
+                                                    data.category
+                                                )}
+                                            </td>
 
 											<td> 
 												{editableId === data._id ? ( 
@@ -239,6 +259,17 @@ function Todo() {
 								onChange={(e) => setNewDescription(e.target.value)} 
 							/> 
 						</div> 
+
+						<div className="mb-3"> 
+                            <label>Category</label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                placeholder="Enter Category"
+                                onChange={(e) => setNewCategory(e.target.value)}
+                            />
+                        </div>
+
 						<button onClick={addTask} className="btn btn-success btn-sm"> 
 							Add Task 
 						</button> 
